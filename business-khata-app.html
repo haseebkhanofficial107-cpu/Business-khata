@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#123e30">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Business Khata Manager</title>
+<link rel="icon" id="favicon" href="data:,">
+<script id="preset">window.__PRESET=null;</script>
+<style>
+:root {
+  --primary: #176b4d;
+  --on-primary: #ffffff;
+  --header: #123e30;
+  --header-text: #ffffff;
+  --header-sub: rgba(255,255,255,.75);
+  --bg: #f3f6f4;
+  --card: #ffffff;
+  --border: #d5dfd8;
+  --text: #203129;
+  --muted: #66766d;
+  --th: #f3f6f4;
+  --input-border: #ccd7d0;
+  --input-bg: #ffffff;
+  --secondary: #e8efea;
+  --notice: #fff7df;
+  --notice-text: #4a3b10;
+  --logo-size: 64px;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+header {
+  background: var(--header);
+  color: var(--header-text);
+  padding: 18px 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+.brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.brandtext { min-width: 0; }
+header h1 { margin: 0 0 6px; font-size: 25px; overflow-wrap: anywhere; }
+header p { margin: 0; color: var(--header-sub); font-size: 14px; }
+.logo {
+  width: var(--logo-size);
+  height: var(--logo-size);
+  flex: none;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: calc(var(--logo-size) * 0.45);
+  background: var(--secondary);
+  color: var(--text);
+  border: 2px solid var(--border);
+}
+header .logo {
+  background: rgba(255,255,255,.18);
+  color: #fff;
+  border: 2px solid rgba(255,255,255,.4);
+}
+.logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.logo.round { border-radius: 50%; }
+.logo.rounded { border-radius: 22%; }
+.logo.square { border-radius: 0; }
+main { max-width: 1200px; margin: auto; padding: 22px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.tabs button, button {
+  cursor: pointer;
+  border: 0;
+  border-radius: 8px;
+  padding: 11px 15px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-weight: 600;
+  font: inherit;
+  font-weight: 600;
+}
+.tabs button { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+.tabs button.active { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
+header button.light { background: rgba(255,255,255,.2); color: #fff; border: 1px solid rgba(255,255,255,.4); white-space: nowrap; }
+.panel { display: none; }
+.panel.active { display: block; }
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(170px,1fr));
+  gap: 13px;
+  margin-bottom: 22px;
+}
+.card, .section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+.card span { color: var(--muted); font-size: 13px; }
+.card h2 { margin: 12px 0 0; font-size: 24px; overflow-wrap: anywhere; }
+h2, h3 { margin-top: 0; }
+.section h2 { font-size: 19px; }
+label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+input, select, textarea {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid var(--input-border);
+  border-radius: 7px;
+  background: var(--input-bg);
+  font: inherit;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+input[type=range] { padding: 0; accent-color: var(--primary); }
+input[type=file] { padding: 9px; }
+.formgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(190px,1fr));
+  gap: 0 14px;
+}
+.full { grid-column: 1 / -1; }
+table { width: 100%; border-collapse: collapse; min-width: 650px; }
+th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; }
+th { background: var(--th); }
+.tablewrap { overflow-x: auto; }
+.small { font-size: 12px; color: var(--muted); }
+.danger { background: #a83434; color: #fff; padding: 11px 15px; }
+.secondary { background: var(--secondary); color: var(--text); }
+.empty { padding: 22px; color: var(--muted); text-align: center; }
+.notice { background: var(--notice); color: var(--notice-text); padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+footer { text-align: center; color: var(--muted); padding: 25px; font-size: 12px; }
+.logorow { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; margin-bottom: 8px; }
+.logoctl { flex: 1; min-width: 240px; }
+.themegrid { display: grid; grid-template-columns: repeat(auto-fit,minmax(110px,1fr)); gap: 12px; }
+.swatch {
+  padding: 10px;
+  background: var(--card);
+  color: var(--text);
+  border: 2px solid var(--border);
+  text-align: center;
+  font-size: 12px;
+}
+.swatch i { display: block; height: 38px; border-radius: 8px; margin-bottom: 8px; }
+.swatch.active { border-color: var(--primary); outline: 2px solid var(--primary); }
+.btnrow { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+@media(max-width:600px) {
+  main { padding: 13px; }
+  header { padding: 16px; }
+  header h1 { font-size: 20px; }
+  .logo { width: min(var(--logo-size), 96px); height: min(var(--logo-size), 96px); }
+  .card h2 { font-size: 21px; }
+  .tabs button { flex: 1; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div id="logoBox" class="logo round"><img id="logoImg" alt="Logo" hidden><span id="logoInit">B</span></div>
+    <div class="brandtext">
+      <h1 id="hdrTitle">Business Khata Manager</h1>
+      <p id="hdrTagline"></p>
+    </div>
+  </div>
+  <button id="installBtn" class="light" type="button" hidden>Install App</button>
+</header>
+
+<main>
+  <div class="notice">
+    Your records are saved in this browser on this device. Export backups regularly.
+    This is a basic local tool, not a cloud accounting system.
+  </div>
+
+  <div class="tabs">
+    <button class="active" data-tab="dashboard">Dashboard</button>
+    <button data-tab="sales">Add Sale</button>
+    <button data-tab="payment">Receive Payment</button>
+    <button data-tab="khata">Customer Khata</button>
+    <button data-tab="reports">Reports</button>
+    <button data-tab="settings">Settings & Backup</button>
+  </div>
+
+  <section id="dashboard" class="panel active">
+    <div class="section">
+      <label for="dashDate">Select date</label>
+      <input type="date" id="dashDate">
+      <p class="small">Choose a date to view that day's records.</p>
+    </div>
+    <div class="cards">
+      <div class="card"><span>Total Sales</span><h2 id="daySales">Rs 0</h2></div>
+      <div class="card"><span>Received Today</span><h2 id="dayReceived">Rs 0</h2></div>
+      <div class="card"><span>New Credit Today</span><h2 id="dayCredit">Rs 0</h2></div>
+      <div class="card"><span>Payments Collected</span><h2 id="dayPayments">Rs 0</h2></div>
+      <div class="card"><span>Total Outstanding</span><h2 id="allDue">Rs 0</h2></div>
+    </div>
+    <div class="section">
+      <h2>Today's Activity</h2>
+      <div id="todayActivity" class="tablewrap"></div>
+    </div>
+  </section>
+
+  <section id="sales" class="panel">
+    <div class="section">
+      <h2>Record a Sale</h2>
+      <p class="small">Record a bill, including paid and credit amounts.</p>
+      <form id="saleForm">
+        <div class="formgrid">
+          <div><label for="saleDate">Sale date</label><input id="saleDate" type="date" required></div>
+          <div><label for="saleCustomer">Customer name (optional for cash sale)</label><input id="saleCustomer" placeholder="e.g. Ali"></div>
+          <div><label for="salePhone">Phone (optional)</label><input id="salePhone" placeholder="Phone number"></div>
+          <div><label for="saleAmount">Total bill</label><input id="saleAmount" type="number" min="0.01" step="0.01" required placeholder="1000"></div>
+          <div><label for="salePaid">Amount paid now</label><input id="salePaid" type="number" min="0" step="0.01" value="0" required></div>
+          <div><label for="saleMethod">Payment method</label><select id="saleMethod"><option>Cash</option><option>JazzCash</option><option>EasyPaisa</option><option>Bank Transfer</option><option>Card</option></select></div>
+          <div class="full"><label for="saleNote">Details (optional)</label><input id="saleNote" placeholder="Items, bill number, etc."></div>
+        </div>
+        <p class="small">If the bill is on credit, enter the customer's name. Paid amount cannot exceed the total bill.</p>
+        <button type="submit">Save Sale</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="payment" class="panel">
+    <div class="section">
+      <h2>Receive Customer Payment</h2>
+      <p class="small">Use this when a customer pays some or all of an older outstanding balance.</p>
+      <form id="paymentForm">
+        <div class="formgrid">
+          <div><label for="paymentDate">Payment date</label><input id="paymentDate" type="date" required></div>
+          <div><label for="paymentCustomer">Customer</label><select id="paymentCustomer" required><option value="">Select customer</option></select></div>
+          <div><label for="paymentAmount">Amount received</label><input id="paymentAmount" type="number" min="0.01" step="0.01" required></div>
+          <div><label for="paymentMethod">Payment method</label><select id="paymentMethod"><option>Cash</option><option>JazzCash</option><option>EasyPaisa</option><option>Bank Transfer</option><option>Card</option></select></div>
+          <div class="full"><label for="paymentNote">Note (optional)</label><input id="paymentNote" placeholder="Payment details"></div>
+        </div>
+        <p id="customerDueInfo" class="small">Select a customer to see their outstanding balance.</p>
+        <button type="submit">Save Payment</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="khata" class="panel">
+    <div class="section">
+      <h2>Customer Khata</h2>
+      <input id="customerSearch" placeholder="Search customer by name or phone">
+      <div id="customerTable" class="tablewrap"></div>
+    </div>
+    <div class="section">
+      <h2>Customer Transaction History</h2>
+      <label for="historyCustomer">Select customer</label>
+      <select id="historyCustomer"><option value="">Select customer</option></select>
+      <div id="customerHistory" class="tablewrap"></div>
+    </div>
+  </section>
+
+  <section id="reports" class="panel">
+    <div class="section">
+      <h2>Daily, Weekly & Monthly Reports</h2>
+      <div class="formgrid">
+        <div><label for="reportType">Report period</label><select id="reportType"><option value="day">Daily</option><option value="week">Weekly (Monday–Sunday)</option><option value="month">Monthly</option></select></div>
+        <div><label for="reportDate">Choose date in period</label><input type="date" id="reportDate"></div>
+      </div>
+      <button id="generateReport" type="button">Generate Report</button>
+      <div class="cards" style="margin-top:18px">
+        <div class="card"><span>Total Sales</span><h2 id="reportSales">Rs 0</h2></div>
+        <div class="card"><span>Received Against Sales</span><h2 id="reportReceived">Rs 0</h2></div>
+        <div class="card"><span>Credit Added</span><h2 id="reportCredit">Rs 0</h2></div>
+        <div class="card"><span>Old Balances Collected</span><h2 id="reportPayments">Rs 0</h2></div>
+      </div>
+      <div id="reportActivity" class="tablewrap"></div>
+    </div>
+  </section>
+
+  <section id="settings" class="panel">
+    <div class="section">
+      <h2>Business Branding</h2>
+      <div class="formgrid">
+        <div><label for="setName">Business name</label><input id="setName" maxlength="60" placeholder="e.g. Ali General Store"></div>
+        <div><label for="setTagline">Tagline (optional)</label><input id="setTagline" maxlength="90" placeholder="e.g. Quality you can trust"></div>
+        <div><label for="setCurrency">Currency symbol</label><input id="setCurrency" maxlength="6" placeholder="Rs"></div>
+      </div>
+      <button id="saveSettings" type="button">Save Business Details</button>
+    </div>
+
+    <div class="section">
+      <h2>Logo</h2>
+      <div class="logorow">
+        <div id="logoPreview" class="logo round"><img id="logoPreviewImg" alt="Logo preview" hidden><span id="logoPreviewInit">B</span></div>
+        <div class="logoctl">
+          <label for="logoFile">Upload business logo (any photo or image)</label>
+          <input type="file" id="logoFile" accept="image/*">
+          <div class="formgrid">
+            <div>
+              <label for="logoShape">Logo shape</label>
+              <select id="logoShape">
+                <option value="round">Round (like WhatsApp profile)</option>
+                <option value="rounded">Rounded square</option>
+                <option value="square">Square</option>
+              </select>
+            </div>
+            <div>
+              <label for="logoSize">Logo size: <span id="logoSizeVal">64</span> px</label>
+              <input type="range" id="logoSize" min="40" max="140" step="2" value="64">
+            </div>
+          </div>
+          <button id="removeLogo" class="secondary" type="button">Remove Logo</button>
+        </div>
+      </div>
+      <p class="small">The image is automatically cropped to a square from the center. The header adjusts to the logo size.</p>
+    </div>
+
+    <div class="section">
+      <h2>Theme</h2>
+      <div id="themeGrid" class="themegrid"></div>
+    </div>
+
+    <div class="section">
+      <h2>Get the App</h2>
+      <p class="small">Install this on a phone or computer so it opens like a normal app, or download the app file to share.</p>
+      <div class="btnrow">
+        <button id="installBtn2" type="button">Install App</button>
+        <button id="downloadApp" class="secondary" type="button">Download App File (.html)</button>
+      </div>
+      <p class="small">The downloaded file keeps your current business name, logo and theme, but not your sales records. It works offline in any browser. Use Export Backup below to move records between devices.</p>
+    </div>
+
+    <div class="section">
+      <h2>Backup & Restore</h2>
+      <p class="small">Export your records to a JSON backup file. Keep it safe. Importing a backup replaces the current records.</p>
+      <p><button id="exportData" type="button">Export Backup</button></p>
+      <label for="importFile">Restore from backup</label>
+      <input id="importFile" type="file" accept=".json,application/json">
+      <button id="importData" type="button">Import Backup</button>
+      <p class="small">Do not delete browser data without a backup. This tool has no login or cloud sync.</p>
+    </div>
+
+    <div class="section">
+      <h2>Danger Zone</h2>
+      <p class="small">Permanently erase all saved records in this browser.</p>
+      <button id="clearData" class="danger" type="button">Delete All Data</button>
+    </div>
+  </section>
+</main>
+
+<footer id="footerText">Business Khata Manager · Local browser version</footer>
+
+<script>
+const APP_SOURCE = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+const KEY = "businessKhata_v1";
+const OLD_KEY = "restaurantKhata_v1";
+const $ = id => document.getElementById(id);
+const today = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+};
+const money = n => (db.currency || "Rs") + " " + Number(n || 0).toLocaleString("en-PK", {
+  minimumFractionDigits: 0, maximumFractionDigits: 2
+});
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+const clean = value => String(value ?? "").trim();
+const esc = value => String(value ?? "").replace(/[&<>"']/g, ch => ({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[ch]));
+
+/* ---------- Themes ---------- */
+const mk = (label, primary, header, bg, border, text, muted, secondary) => ({
+  label, primary, onPrimary:"#ffffff", header, headerText:"#ffffff",
+  headerSub:"rgba(255,255,255,.75)", bg, card:"#ffffff", border, text, muted,
+  th:bg, inputBorder:border, inputBg:"#ffffff", secondary,
+  notice:"#fff7df", noticeText:"#4a3b10", dark:false
+});
+const THEMES = {
+  emerald: mk("Emerald","#176b4d","#123e30","#f3f6f4","#d5dfd8","#203129","#66766d","#e8efea"),
+  ocean:   mk("Ocean Blue","#1769aa","#0f3d63","#f1f6fb","#d3e0ee","#1b2a3a","#60738a","#e4eef8"),
+  royal:   mk("Royal Purple","#6a3fb5","#3f2470","#f6f3fb","#ddd3ee","#2a2038","#74698a","#ebe4f7"),
+  sunset:  mk("Sunset Orange","#d9631e","#7a3410","#fdf6f0","#f0dccb","#3a2616","#8a7260","#f8e8da"),
+  rose:    mk("Rose Pink","#c2336a","#6e1a3c","#fcf2f6","#f0d3df","#3a1b28","#8a6676","#f9e4ec"),
+  coffee:  mk("Coffee Brown","#7b4a2a","#4a2c17","#faf4ec","#e6d6c3","#3b2a1d","#85705e","#f1e5d6"),
+  gold: {
+    label:"Midnight Gold", primary:"#e0b04a", onPrimary:"#1b1405", header:"#0b0d12", headerText:"#ffffff",
+    headerSub:"rgba(255,255,255,.65)", bg:"#12151c", card:"#1c212b", border:"#2c3340", text:"#e8ebf0",
+    muted:"#9aa3b2", th:"#232a36", inputBorder:"#3a4352", inputBg:"#151a22", secondary:"#2a3240",
+    notice:"#2d2814", noticeText:"#e8d9a0", dark:true
+  },
+  night: {
+    label:"Night Green", primary:"#2fbf8a", onPrimary:"#04130d", header:"#08120f", headerText:"#ffffff",
+    headerSub:"rgba(255,255,255,.65)", bg:"#0f1a17", card:"#17251f", border:"#25382f", text:"#e3f0ea",
+    muted:"#8fa89d", th:"#1d2e27", inputBorder:"#33493f", inputBg:"#122019", secondary:"#223329",
+    notice:"#2d2a14", noticeText:"#e8d9a0", dark:true
+  }
+};
+const DEFAULT_TAGLINE = "Daily sales · Customer khata · Payments · Reports";
+
+/* ---------- Data ---------- */
+function normalize(s) {
+  s = s && typeof s === "object" ? s : {};
+  return {
+    name: typeof s.name === "string" ? s.name : "",
+    tagline: typeof s.tagline === "string" ? s.tagline : DEFAULT_TAGLINE,
+    currency: typeof s.currency === "string" && s.currency.trim() ? s.currency.trim() : "Rs",
+    theme: THEMES[s.theme] ? s.theme : "emerald",
+    logo: typeof s.logo === "string" && s.logo.startsWith("data:image/") ? s.logo : "",
+    logoShape: ["round","rounded","square"].includes(s.logoShape) ? s.logoShape : "round",
+    logoSize: Math.min(140, Math.max(40, Number(s.logoSize) || 64)),
+    sales: Array.isArray(s.sales) ? s.sales : [],
+    payments: Array.isArray(s.payments) ? s.payments : []
+  };
+}
+function loadData() {
+  for (const k of [KEY, OLD_KEY]) {
+    try {
+      const saved = JSON.parse(localStorage.getItem(k));
+      if (saved && Array.isArray(saved.sales) && Array.isArray(saved.payments)) return normalize(saved);
+    } catch(e) {}
+  }
+  return normalize(window.__PRESET || {});
+}
+let db = loadData();
+function persist() {
+  try { localStorage.setItem(KEY, JSON.stringify(db)); return true; }
+  catch(e) { return false; }
+}
+function save() {
+  if (!persist()) alert("Could not save: browser storage is full or blocked. Export a backup and try a smaller logo.");
+  renderAll();
+}
+
+/* ---------- Branding ---------- */
+function paintLogo(box, img, init, name) {
+  box.className = "logo " + db.logoShape;
+  if (db.logo) {
+    img.src = db.logo; img.hidden = false; init.hidden = true;
+  } else {
+    img.removeAttribute("src"); img.hidden = true; init.hidden = false;
+    init.textContent = (name.trim().charAt(0) || "B").toUpperCase();
+  }
+}
+function applyBranding() {
+  const t = THEMES[db.theme] || THEMES.emerald;
+  const r = document.documentElement.style;
+  r.setProperty("--primary", t.primary);
+  r.setProperty("--on-primary", t.onPrimary);
+  r.setProperty("--header", t.header);
+  r.setProperty("--header-text", t.headerText);
+  r.setProperty("--header-sub", t.headerSub);
+  r.setProperty("--bg", t.bg);
+  r.setProperty("--card", t.card);
+  r.setProperty("--border", t.border);
+  r.setProperty("--text", t.text);
+  r.setProperty("--muted", t.muted);
+  r.setProperty("--th", t.th);
+  r.setProperty("--input-border", t.inputBorder);
+  r.setProperty("--input-bg", t.inputBg);
+  r.setProperty("--secondary", t.secondary);
+  r.setProperty("--notice", t.notice);
+  r.setProperty("--notice-text", t.noticeText);
+  r.setProperty("--logo-size", db.logoSize + "px");
+  r.setProperty("color-scheme", t.dark ? "dark" : "light");
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute("content", t.header);
+
+  const name = db.name || "Business Khata Manager";
+  $("hdrTitle").textContent = name;
+  $("hdrTagline").textContent = db.tagline;
+  $("hdrTagline").hidden = !db.tagline;
+  document.title = name;
+  $("footerText").textContent = name + " · Khata Manager";
+  paintLogo($("logoBox"), $("logoImg"), $("logoInit"), name);
+  paintLogo($("logoPreview"), $("logoPreviewImg"), $("logoPreviewInit"), name);
+  $("favicon").href = db.logo || "data:,";
+  updateManifest();
+}
+function syncSettingsInputs() {
+  $("setName").value = db.name;
+  $("setTagline").value = db.tagline;
+  $("setCurrency").value = db.currency;
+  $("logoShape").value = db.logoShape;
+  $("logoSize").value = db.logoSize;
+  $("logoSizeVal").textContent = db.logoSize;
+}
+function renderThemes() {
+  $("themeGrid").innerHTML = Object.entries(THEMES).map(([key, t]) =>
+    `<button type="button" class="swatch${key===db.theme?" active":""}" data-theme="${key}">` +
+    `<i style="background:linear-gradient(135deg,${t.header} 50%,${t.primary} 50%)"></i>${esc(t.label)}</button>`
+  ).join("");
+}
+$("themeGrid").addEventListener("click", e => {
+  const b = e.target.closest("[data-theme]");
+  if (!b) return;
+  db.theme = b.dataset.theme;
+  persist(); applyBranding(); renderThemes();
+});
+$("saveSettings").addEventListener("click", () => {
+  db.name = clean($("setName").value);
+  db.tagline = clean($("setTagline").value);
+  db.currency = clean($("setCurrency").value) || "Rs";
+  save(); alert("Business details saved.");
+});
+$("logoShape").addEventListener("change", () => {
+  db.logoShape = $("logoShape").value; persist(); applyBranding();
+});
+$("logoSize").addEventListener("input", () => {
+  db.logoSize = Number($("logoSize").value);
+  $("logoSizeVal").textContent = db.logoSize;
+  document.documentElement.style.setProperty("--logo-size", db.logoSize + "px");
+});
+$("logoSize").addEventListener("change", () => { persist(); });
+$("logoFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  if (!f.type.startsWith("image/")) { e.target.value = ""; return alert("Please choose an image file."); }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const S = 256, c = document.createElement("canvas");
+      c.width = c.height = S;
+      const m = Math.min(img.width, img.height);
+      c.getContext("2d").drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, S, S);
+      db.logo = c.toDataURL("image/png");
+      save();
+    };
+    img.onerror = () => alert("This image could not be read. Try a JPG or PNG.");
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(f);
+  e.target.value = "";
+});
+$("removeLogo").addEventListener("click", () => {
+  if (!db.logo) return alert("No logo is set.");
+  db.logo = ""; save();
+});
+
+/* ---------- Install / download app ---------- */
+let deferredPrompt = null;
+function showInstall(show) { $("installBtn").hidden = !show; }
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault(); deferredPrompt = e; showInstall(true);
+});
+window.addEventListener("appinstalled", () => { deferredPrompt = null; showInstall(false); });
+async function installApp() {
+  if (!deferredPrompt) {
+    alert("Your browser is not offering direct install right now.\n\n" +
+      "Android (Chrome): menu ⋮ → Install app / Add to Home screen.\n" +
+      "iPhone (Safari): Share button → Add to Home Screen.\n" +
+      "Computer (Chrome/Edge): install icon in the address bar.\n\n" +
+      "Direct install works best when this file is hosted online (https). " +
+      "You can also use Download App File.");
+    return;
+  }
+  deferredPrompt.prompt();
+  try { await deferredPrompt.userChoice; } catch(e) {}
+  deferredPrompt = null; showInstall(false);
+}
+$("installBtn").addEventListener("click", installApp);
+$("installBtn2").addEventListener("click", installApp);
+
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "business";
+$("downloadApp").addEventListener("click", () => {
+  const preset = {
+    name: db.name, tagline: db.tagline, currency: db.currency, theme: db.theme,
+    logo: db.logo, logoShape: db.logoShape, logoSize: db.logoSize
+  };
+  const json = JSON.stringify(preset).replace(/</g, "\\u003c");
+  const html = APP_SOURCE.replace(/<script id="preset">[\s\S]*?<\/script>/, () =>
+    '<script id="preset">window.__PRESET=' + json + ';<\/script>');
+  const blob = new Blob([html], {type: "text/html"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = slug(db.name || "business") + "-khata-app.html";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+});
+
+/* Best-effort web app manifest (only used when hosted on http/https) */
+let manifestTimer = null, manifestURL = null;
+function iconURL(size) {
+  return new Promise(res => {
+    const c = document.createElement("canvas");
+    c.width = c.height = size;
+    const x = c.getContext("2d");
+    const t = THEMES[db.theme] || THEMES.emerald;
+    const done = () => res(c.toDataURL("image/png"));
+    function fallback() {
+      x.fillStyle = t.primary; x.fillRect(0, 0, size, size);
+      x.fillStyle = t.onPrimary; x.font = "bold " + Math.round(size * 0.55) + "px Arial";
+      x.textAlign = "center"; x.textBaseline = "middle";
+      x.fillText(((db.name || "B").trim().charAt(0) || "B").toUpperCase(), size / 2, size / 2 + size * 0.03);
+      done();
+    }
+    if (db.logo) {
+      const im = new Image();
+      im.onload = () => { x.fillStyle = "#ffffff"; x.fillRect(0, 0, size, size); x.drawImage(im, 0, 0, size, size); done(); };
+      im.onerror = fallback;
+      im.src = db.logo;
+    } else fallback();
+  });
+}
+function updateManifest() {
+  if (!/^https?:$/.test(location.protocol)) return;
+  clearTimeout(manifestTimer);
+  manifestTimer = setTimeout(async () => {
+    try {
+      const t = THEMES[db.theme] || THEMES.emerald;
+      const [i192, i512] = await Promise.all([iconURL(192), iconURL(512)]);
+      const m = {
+        name: db.name || "Business Khata Manager",
+        short_name: (db.name || "Khata").slice(0, 12),
+        start_url: location.href,
+        scope: location.href.replace(/[^/]*$/, ""),
+        display: "standalone",
+        background_color: t.bg,
+        theme_color: t.header,
+        icons: [
+          {src: i192, sizes: "192x192", type: "image/png"},
+          {src: i512, sizes: "512x512", type: "image/png"}
+        ]
+      };
+      const url = URL.createObjectURL(new Blob([JSON.stringify(m)], {type: "application/manifest+json"}));
+      let link = document.querySelector('link[rel="manifest"]');
+      if (!link) { link = document.createElement("link"); link.rel = "manifest"; document.head.appendChild(link); }
+      link.href = url;
+      if (manifestURL) URL.revokeObjectURL(manifestURL);
+      manifestURL = url;
+    } catch(e) {}
+  }, 500);
+}
+
+/* ---------- Khata logic ---------- */
+function customerName(s) {
+  return clean(s.customer) || "Walk-in customer";
+}
+function balanceFor(name, phone) {
+  const sales = db.sales.filter(s => s.customer && s.customer.toLowerCase() === name.toLowerCase()
+    && (!phone || s.phone === phone));
+  const payments = db.payments.filter(p => p.customer.toLowerCase() === name.toLowerCase()
+    && (!phone || p.phone === phone));
+  return sales.reduce((sum,s)=>sum+s.amount-s.paid,0)
+    - payments.reduce((sum,p)=>sum+p.amount,0);
+}
+function customers() {
+  const map = new Map();
+  db.sales.filter(s=>s.customer).forEach(s=>{
+    const key = s.customer.toLowerCase();
+    if (!map.has(key)) map.set(key,{name:s.customer,phone:s.phone||""});
+    else if (!map.get(key).phone && s.phone) map.get(key).phone=s.phone;
+  });
+  db.payments.forEach(p=>{
+    const key=p.customer.toLowerCase();
+    if (!map.has(key)) map.set(key,{name:p.customer,phone:p.phone||""});
+  });
+  return [...map.values()].sort((a,b)=>a.name.localeCompare(b.name));
+}
+function addRow(title,date,detail,amount) {
+  return `<tr><td>${esc(date)}</td><td>${esc(title)}</td><td>${esc(detail)}</td><td>${money(amount)}</td></tr>`;
+}
+function activityRows(date) {
+  const rows = [];
+  db.sales.filter(s=>s.date===date).forEach(s=>{
+    rows.push({date:s.date,title:"Sale",detail:customerName(s)+" · "+(s.note||s.method),amount:s.amount});
+  });
+  db.payments.filter(p=>p.date===date).forEach(p=>{
+    rows.push({date:p.date,title:"Old balance payment",detail:p.customer+" · "+(p.note||p.method),amount:p.amount});
+  });
+  rows.sort((a,b)=>a.title.localeCompare(b.title));
+  if (!rows.length) return '<div class="empty">No records for this date yet.</div>';
+  return `<table><thead><tr><th>Date</th><th>Type</th><th>Details</th><th>Amount</th></tr></thead><tbody>${
+    rows.map(r=>addRow(r.title,r.date,r.detail,r.amount)).join("")
+  }</tbody></table>`;
+}
+function totalsFor(start,end) {
+  const sales = db.sales.filter(s=>s.date>=start && s.date<=end);
+  const payments = db.payments.filter(p=>p.date>=start && p.date<=end);
+  return {
+    sales:sales.reduce((n,s)=>n+s.amount,0),
+    received:sales.reduce((n,s)=>n+s.paid,0),
+    credit:sales.reduce((n,s)=>n+s.amount-s.paid,0),
+    payments:payments.reduce((n,p)=>n+p.amount,0)
+  };
+}
+function renderDashboard() {
+  const date=$("dashDate").value || today();
+  const t=totalsFor(date,date);
+  $("daySales").textContent=money(t.sales);
+  $("dayReceived").textContent=money(t.received);
+  $("dayCredit").textContent=money(t.credit);
+  $("dayPayments").textContent=money(t.payments);
+  $("allDue").textContent=money(customers().reduce((n,c)=>n+Math.max(0,balanceFor(c.name,c.phone)),0));
+  $("todayActivity").innerHTML=activityRows(date);
+}
+function renderCustomers() {
+  const list=customers();
+  const old1=$("paymentCustomer").value;
+  const old2=$("historyCustomer").value;
+  const opts='<option value="">Select customer</option>'+list.map(c=>
+    `<option value="${esc(c.name)}">${esc(c.name)}${c.phone?" · "+esc(c.phone):""}</option>`).join("");
+  $("paymentCustomer").innerHTML=opts;
+  $("historyCustomer").innerHTML=opts;
+  if(list.some(c=>c.name===old1)) $("paymentCustomer").value=old1;
+  if(list.some(c=>c.name===old2)) $("historyCustomer").value=old2;
+
+  const search=$("customerSearch").value.trim().toLowerCase();
+  const filtered=list.filter(c=>(c.name+" "+c.phone).toLowerCase().includes(search));
+  $("customerTable").innerHTML=filtered.length?`<table><thead><tr><th>Customer</th><th>Phone</th><th>Total Credit</th><th>Payments</th><th>Balance</th></tr></thead><tbody>${
+    filtered.map(c=>{
+      const ss=db.sales.filter(s=>s.customer.toLowerCase()===c.name.toLowerCase());
+      const pp=db.payments.filter(p=>p.customer.toLowerCase()===c.name.toLowerCase());
+      const credit=ss.reduce((n,s)=>n+s.amount-s.paid,0);
+      const paid=pp.reduce((n,p)=>n+p.amount,0);
+      return `<tr><td>${esc(c.name)}</td><td>${esc(c.phone||"-")}</td><td>${money(credit)}</td><td>${money(paid)}</td><td><strong>${money(credit-paid)}</strong></td></tr>`;
+    }).join("")
+  }</tbody></table>`:'<div class="empty">No customers found.</div>';
+  renderHistory();
+  updateCustomerDue();
+}
+function renderHistory() {
+  const name=$("historyCustomer").value;
+  if(!name) {$("customerHistory").innerHTML='<div class="empty">Select a customer to view history.</div>';return;}
+  const rows=[];
+  db.sales.filter(s=>s.customer.toLowerCase()===name.toLowerCase()).forEach(s=>{
+    rows.push({date:s.date,type:"Sale",detail:s.note||s.method,amount:s.amount,paid:s.paid});
+  });
+  db.payments.filter(p=>p.customer.toLowerCase()===name.toLowerCase()).forEach(p=>{
+    rows.push({date:p.date,type:"Payment received",detail:p.note||p.method,amount:p.amount,paid:p.amount});
+  });
+  rows.sort((a,b)=>b.date.localeCompare(a.date));
+  $("customerHistory").innerHTML=rows.length?`<table><thead><tr><th>Date</th><th>Type</th><th>Details</th><th>Amount</th><th>Paid</th></tr></thead><tbody>${
+    rows.map(r=>`<tr><td>${esc(r.date)}</td><td>${esc(r.type)}</td><td>${esc(r.detail)}</td><td>${money(r.amount)}</td><td>${money(r.paid)}</td></tr>`).join("")
+  }</tbody></table>`:'<div class="empty">No transaction history.</div>';
+}
+function updateCustomerDue() {
+  const name=$("paymentCustomer").value;
+  const c=customers().find(x=>x.name===name);
+  $("customerDueInfo").textContent=c?`Current balance for ${c.name}: ${money(balanceFor(c.name,c.phone))}`:"Select a customer to see their outstanding balance.";
+}
+function period() {
+  const d=new Date(($("reportDate").value||today())+"T12:00:00");
+  const type=$("reportType").value;
+  const fmt=x=>`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
+  let start=new Date(d), end=new Date(d);
+  if(type==="week") {
+    const offset=(d.getDay()+6)%7;
+    start.setDate(d.getDate()-offset);
+    end=new Date(start); end.setDate(start.getDate()+6);
+  } else if(type==="month") {
+    start=new Date(d.getFullYear(),d.getMonth(),1);
+    end=new Date(d.getFullYear(),d.getMonth()+1,0);
+  }
+  return [fmt(start),fmt(end)];
+}
+function renderReport() {
+  const [start,end]=period();
+  const t=totalsFor(start,end);
+  $("reportSales").textContent=money(t.sales);
+  $("reportReceived").textContent=money(t.received);
+  $("reportCredit").textContent=money(t.credit);
+  $("reportPayments").textContent=money(t.payments);
+  const sales=db.sales.filter(s=>s.date>=start&&s.date<=end);
+  const payments=db.payments.filter(p=>p.date>=start&&p.date<=end);
+  let rows=[];
+  sales.forEach(s=>rows.push({date:s.date,type:"Sale",detail:customerName(s),amount:s.amount}));
+  payments.forEach(p=>rows.push({date:p.date,type:"Payment received",detail:p.customer,amount:p.amount}));
+  rows.sort((a,b)=>b.date.localeCompare(a.date));
+  $("reportActivity").innerHTML=`<p class="small">Period: ${start} to ${end}</p>`+(rows.length?
+    `<table><thead><tr><th>Date</th><th>Type</th><th>Customer</th><th>Amount</th></tr></thead><tbody>${rows.map(r=>addRow(r.type,r.date,r.detail,r.amount)).join("")}</tbody></table>`:
+    '<div class="empty">No transactions in this period.</div>');
+}
+function renderAll() {
+  applyBranding();
+  syncSettingsInputs();
+  renderThemes();
+  renderDashboard();
+  renderCustomers();
+  renderReport();
+}
+
+/* ---------- Events ---------- */
+document.querySelectorAll("[data-tab]").forEach(btn=>btn.addEventListener("click",()=>{
+  if (!btn.classList.contains("tab-ignore") && btn.closest(".tabs")) {
+    document.querySelectorAll(".tabs [data-tab]").forEach(b=>b.classList.toggle("active",b===btn));
+    document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===btn.dataset.tab));
+  }
+}));
+$("saleForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const amount=Number($("saleAmount").value);
+  const paid=Number($("salePaid").value);
+  const customer=clean($("saleCustomer").value);
+  if(!Number.isFinite(amount)||amount<=0) return alert("Enter a valid bill amount.");
+  if(!Number.isFinite(paid)||paid<0||paid>amount) return alert("Paid amount must be between zero and the bill total.");
+  if(amount>paid&&!customer) return alert("Enter the customer name when a bill has an outstanding balance.");
+  db.sales.push({
+    id:uid(),date:$("saleDate").value,customer,phone:clean($("salePhone").value),
+    amount,paid,method:$("saleMethod").value,note:clean($("saleNote").value)
+  });
+  save(); e.target.reset();
+  $("saleDate").value=today(); $("salePaid").value="0";
+  alert("Sale saved successfully.");
+});
+$("paymentForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const name=$("paymentCustomer").value;
+  const c=customers().find(x=>x.name===name);
+  const amount=Number($("paymentAmount").value);
+  if(!c) return alert("Select a customer.");
+  if(!Number.isFinite(amount)||amount<=0) return alert("Enter a valid payment amount.");
+  if(amount>balanceFor(c.name,c.phone)+0.001) return alert("Payment is greater than this customer's outstanding balance.");
+  db.payments.push({
+    id:uid(),date:$("paymentDate").value,customer:c.name,phone:c.phone,
+    amount,method:$("paymentMethod").value,note:clean($("paymentNote").value)
+  });
+  save(); e.target.reset(); $("paymentDate").value=today();
+  alert("Payment saved successfully.");
+});
+$("dashDate").addEventListener("change",renderDashboard);
+$("customerSearch").addEventListener("input",renderCustomers);
+$("historyCustomer").addEventListener("change",renderHistory);
+$("paymentCustomer").addEventListener("change",updateCustomerDue);
+$("reportType").addEventListener("change",renderReport);
+$("reportDate").addEventListener("change",renderReport);
+$("generateReport").addEventListener("click",renderReport);
+$("exportData").addEventListener("click",()=>{
+  const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a"); a.href=url;
+  a.download=slug(db.name||"business")+"-khata-backup-"+today()+".json"; a.click();
+  URL.revokeObjectURL(url);
+});
+$("importData").addEventListener("click",()=>{
+  const file=$("importFile").files[0];
+  if(!file) return alert("Choose a backup file first.");
+  if(!confirm("Importing replaces all current records. Continue?")) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try {
+      const d=JSON.parse(reader.result);
+      if(!d||!Array.isArray(d.sales)||!Array.isArray(d.payments)) throw new Error();
+      if(!d.sales.every(s=>typeof s.date==="string"&&Number.isFinite(s.amount)&&Number.isFinite(s.paid))||
+         !d.payments.every(p=>typeof p.date==="string"&&Number.isFinite(p.amount))) throw new Error();
+      db=normalize(d);
+      save(); alert("Backup restored.");
+    } catch(err) { alert("This backup file is invalid."); }
+  };
+  reader.readAsText(file);
+});
+$("clearData").addEventListener("click",()=>{
+  if(confirm("Delete ALL records permanently from this browser? Export a backup first if needed.")) {
+    db=normalize(window.__PRESET||{}); save(); alert("All records deleted.");
+  }
+});
+$("dashDate").value=today();
+$("saleDate").value=today();
+$("paymentDate").value=today();
+$("reportDate").value=today();
+renderAll();
+</script>
+</body>
+</html>
